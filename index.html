@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="United Nations Libraries Material Collector">
+    <meta name="author" content="United Nations">
+    <title>DHL Material Collector</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+      .filedrop { border: 2px dashed #ccc; border-radius: 5px; min-height: 10em;}
+    </style>
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/html5shiv.js"></script>
+      <script src="../../assets/js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <h2>DHL Materials Collector</h2>
+      <div class="row" id="loginContainer">
+        <h3>Enter your credentials</h3>
+        <p>They should have been provided to you in a file.  Paste the contents of that file here.</p>
+        <form id="credentialsForm">
+          <textarea type="text" id="jsonCredentials" required placeholder="Enter your JSON-formatted credentials." rows="3"></textarea>
+          <br/>
+          <button class="btn btn-primary" id="validateCredentials">Validate</button>
+        </form>
+        <span id="messages"></span>
+      </div>
+      <div class="row" class="describeContainer">
+        
+      </div>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="//code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Amazon's Javascript SDK for Browsers -->
+    <script src="lib/dist/aws-sdk-2.0.0-rc9.min.js"></script>
+    <script>
+      function isJsonString(s) {
+        try {
+          JSON.parse(s);
+        } catch (e) {
+          return false;
+        }
+        return true;
+      }
+      function restoreForm() {
+        $( "#credentialsForm" ).show();
+        $( "#messages" ).empty();
+      }
+
+      $("#validateCredentials").click(function(e) {
+        e.preventDefault();
+        var str = $("#jsonCredentials").val();
+        if (str) {
+          if (isJsonString(str)) {
+            var jsonData = JSON.parse(str);
+          }
+          if (jsonData && jsonData['username'] && jsonData['bucket'] && jsonData['AccessKeyID'] && jsonData['SecretAccessKey']) {
+            var username = jsonData['username'];
+            var bucket = jsonData['bucket'];
+            var access_key_id = jsonData['AccessKeyID'];
+            var secret_access_key = jsonData['SecretAccessKey'];
+
+            //$( "#console" ).append("Found username " + username + ", bucket " + bucket + " and other credentials...<br/>");
+
+            AWS.credentials = AWS.config.credentials = ({
+              'accessKeyId': access_key_id,
+              'secretAccessKey': secret_access_key
+            });
+            var s3 = new AWS.S3();
+
+            s3.getBucketAcl(params = { 'Bucket': bucket }, function (err, data) {
+              if (err) {
+                $("#messages").html("There was an error with the credentials: " + err + "<br/>");
+              } else {
+                $("#credentialsForm").hide();
+                $("#messages").html('<p>Your credentials appear to be valid.  If something goes wrong, you can re-enter them by clicking <a href="#" onClick="restoreForm()">here</a><br/>');
+                
+              }
+            });
+          }
+        }
+      });
+    </script>
+
+  </body>
+
+</html>
