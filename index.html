@@ -54,7 +54,6 @@
     <!-- Amazon's Javascript SDK for Browsers -->
     <script src="lib/dist/aws-sdk-2.0.0-rc9.min.js"></script>
     <script>
-      var bucket = "";
       function isJsonString(s) {
         try {
           JSON.parse(s);
@@ -66,6 +65,10 @@
       function restoreForm() {
         $( "#credentialsForm" ).show();
         $( "#messages" ).empty();
+      }
+
+      function listBucket(s3) {
+        
       }
     
       $("#describeContainer").hide();
@@ -86,11 +89,11 @@
 
             //$( "#console" ).append("Found username " + username + ", bucket " + bucket + " and other credentials...<br/>");
 
-            AWS.credentials = AWS.config.credentials = ({
+            creds = AWS.credentials = AWS.config.credentials = ({
               'accessKeyId': access_key_id,
               'secretAccessKey': secret_access_key
             });
-            var s3 = new AWS.S3();
+            var s3 = new AWS.S3({params: {Bucket: bucket}});
 
             s3.getBucketAcl(params = { 'Bucket': bucket }, function (err, data) {
               if (err) {
@@ -98,6 +101,10 @@
               } else {
                 $("#credentialsForm").hide();
                 $("#messages").html('<p>Your credentials appear to be valid.  If something goes wrong, you can re-enter them by clicking <a href="#" onClick="restoreForm()">here</a><br/>');
+                localStorage.setItem("access_key_id", access_key_id);
+                localStorage.setItem("secret_access_key", secret_access_key);
+                localStorage.setItem("bucket", bucket);
+                localStorage.setItem("username", username);
                 
                 $("#describeContainer").show();
                 $("#fileContainer").show();
@@ -107,20 +114,27 @@
         }
       });
 
-      var s3_bucket = new AWS.S3({params: {Bucket: bucket}});
+
+      var fileChooser = document.getElementById("fileChooser");
       $("#uploadButton").click(function(e) {
-        e.preventDefalt();
-        var file = $("#fileChooser").files[0];
+        e.preventDefault();
+        var s3_params = { 
+          'accessKeyId': localStorage.getItem("access_key_id"),
+          'secretAccessKey': localStorage.getItem("secret_access_key"),
+          'Bucket': localStorage.getItem("bucket")
+        }; 
+        var s3_bucket = new AWS.S3(s3_params);
+        var file = fileChooser.files[0];
         if (file) {
           $("#results").empty();
-          var params = {Key: file.name, ContenType: file.type, Body: file};
+          var params = {Bucket: localStorage.getItem("bucket"), Key: file.name, ContentType: file.type, Body: file};
           s3_bucket.putObject(params, function (err, data) {
-            $("#results").html( err ? 'ERROR!' : 'UPLOADED.');
+            $("#results").html( err ? 'ERROR!' + err : 'UPLOADED.');
           });
         } else {
           $("#results").html("Nothing to upload.");
         }
-      }, false);
+      });
     </script>
 
   </body>
