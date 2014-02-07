@@ -19,124 +19,53 @@
     <![endif]-->
   </head>
   <body>
-    <div class="container">
-      <h2>DHL Materials Collector</h2>
-      <div class="row" id="loginContainer">
-        <h3>Enter your credentials</h3>
-        <p>They should have been provided to you in a file.  Paste the contents of that file here.</p>
-        <form id="credentialsForm">
-          <textarea type="text" id="jsonCredentials" required placeholder="Enter your JSON-formatted credentials." rows="3"></textarea>
-          <br/>
-          <button class="btn btn-primary" id="validateCredentials">Validate</button>
-        </form>
-        <span id="messages"></span>
-      </div>
-      <div class="row" id="describeContainer">
-        <h3>Now describe your materials</h3>
-        <p>The data collected here will apply to all of the items you include in this package, so keep that in mind while gathering and organizing your materials.</p>
-        <form role="form" id="metadataForm">
-          <label for="packageName">Package Name</label>
-          <input type="text" id="packageName"><br/>
-          <label for="packageAuthor">Author/Department</label>
-          <input type="text" id="packageAuthor">
-        </form>
-      </div>
-      <div class="row filedrop" id="fileContainer">
-        <input type="file" id="fileChooser">
-        <button class="btn btn-primary" id="uploadButton">Upload</button>
-        <div id="results"></div>
-      </div>
-    </div>
+    <div class="container" id="everything">
+      <div class="row">
+        <div id="header" class="nav navbar">
+        </div>
+      </div><!-- row -->
+      <div class="row" id="body">
+        <div class="row" id="console">
+          <span id="messages"></span>
+        </div>
+
+        <h2>DHL Materials Collector</h2>
+        <div class="row" id="loginContainer">
+          <h3>Enter your credentials</h3>
+          <p>They should have been provided to you in a file.  Paste the contents of that file here.</p>
+          <form id="credentialsForm">
+            <textarea type="text" id="jsonCredentials" required placeholder="Enter your JSON-formatted credentials." rows="3"></textarea>
+            <br/>
+            <button class="btn btn-primary" id="validateCredentials">Validate</button>
+          </form>
+        </div><!-- row loginContainer -->
+        <div class="row" id="describeContainer">
+          <h3>Now describe your materials</h3>
+          <p>The data collected here will apply to all of the items you include in this package, so keep that in mind while gathering and organizing your materials.</p>
+          <form role="form" id="metadataForm">
+            <label for="packageName">Package Name</label>
+            <input type="text" id="packageName"><br/>
+            <label for="packageAuthor">Author/Department</label>
+            <input type="text" id="packageAuthor">
+            <div class="row filedrop" id="fileContainer">
+              <input type="file" id="fileChooser">
+              <button class="btn btn-primary" id="uploadButton">Upload</button>
+              <div id="results"></div>
+            </div>
+          </form>
+        </div><!-- row describeContainer -->
+        <div class="row" id="objectListContainer">
+          
+        </div><!-- row objectListContainer -->
+      </div><!-- row body -->
+    </div><!-- Everything -->
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="http://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="lib/bootstrap.min.js"></script>
     <!-- Amazon's Javascript SDK for Browsers -->
     <script src="lib/dist/aws-sdk-2.0.0-rc9.min.js"></script>
-    <script>
-      function isJsonString(s) {
-        try {
-          JSON.parse(s);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      }
-      function restoreForm() {
-        $( "#credentialsForm" ).show();
-        $( "#messages" ).empty();
-      }
-
-      function listBucket(s3) {
-        
-      }
-    
-      $("#describeContainer").hide();
-      $("#fileContainer").hide();
-
-      $("#validateCredentials").click(function(e) {
-        e.preventDefault();
-        var str = $("#jsonCredentials").val();
-        if (str) {
-          if (isJsonString(str)) {
-            var jsonData = JSON.parse(str);
-          }
-          if (jsonData && jsonData['username'] && jsonData['bucket'] && jsonData['AccessKeyID'] && jsonData['SecretAccessKey']) {
-            var username = jsonData['username'];
-            bucket = jsonData['bucket'];
-            var access_key_id = jsonData['AccessKeyID'];
-            var secret_access_key = jsonData['SecretAccessKey'];
-
-            //$( "#console" ).append("Found username " + username + ", bucket " + bucket + " and other credentials...<br/>");
-
-            creds = AWS.credentials = AWS.config.credentials = ({
-              'accessKeyId': access_key_id,
-              'secretAccessKey': secret_access_key
-            });
-            var s3 = new AWS.S3({params: {Bucket: bucket}});
-
-            s3.getBucketAcl(params = { 'Bucket': bucket }, function (err, data) {
-              if (err) {
-                $("#messages").html("There was an error with the credentials: " + err + "<br/>");
-              } else {
-                $("#credentialsForm").hide();
-                $("#messages").html('<p>Your credentials appear to be valid.  If something goes wrong, you can re-enter them by clicking <a href="#" onClick="restoreForm()">here</a><br/>');
-                localStorage.setItem("access_key_id", access_key_id);
-                localStorage.setItem("secret_access_key", secret_access_key);
-                localStorage.setItem("bucket", bucket);
-                localStorage.setItem("username", username);
-                
-                $("#describeContainer").show();
-                $("#fileContainer").show();
-              }
-            });
-          }
-        }
-      });
-
-
-      var fileChooser = document.getElementById("fileChooser");
-      $("#uploadButton").click(function(e) {
-        e.preventDefault();
-        var s3_params = { 
-          'accessKeyId': localStorage.getItem("access_key_id"),
-          'secretAccessKey': localStorage.getItem("secret_access_key"),
-          'Bucket': localStorage.getItem("bucket")
-        }; 
-        var s3_bucket = new AWS.S3(s3_params);
-        var file = fileChooser.files[0];
-        if (file) {
-          $("#results").empty();
-          var params = {Bucket: localStorage.getItem("bucket"), Key: file.name, ContentType: file.type, Body: file};
-          s3_bucket.putObject(params, function (err, data) {
-            $("#results").html( err ? 'ERROR!' + err : 'UPLOADED.');
-          });
-        } else {
-          $("#results").html("Nothing to upload.");
-        }
-      });
-    </script>
-
+    <script src="js/collector.js"></script>
   </body>
-
 </html>
