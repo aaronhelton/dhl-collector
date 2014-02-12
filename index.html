@@ -9,9 +9,10 @@
     <title>DHL Material Collector</title>
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <style>
+    <!-- <style>
       .filedrop { border: 2px dashed #ccc; border-radius: 5px; min-height: 10em;}
-    </style>
+    </style> -->
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="../../assets/js/html5shiv.js"></script>
@@ -26,34 +27,50 @@
       </div><!-- row -->
       <div class="row" id="body">
         <div class="row" id="console">
-          <span id="messages"></span>
+          <span id="messages" class="text-info"></span>
         </div>
 
         <h2>DHL Materials Collector</h2>
         <div class="row" id="loginContainer">
           <h3>Enter your credentials</h3>
-          <p>They should have been provided to you in a file.  Paste the contents of that file here.</p>
+          <p class="help-block">They should have been provided to you in a file.  Paste the contents of that file here.</p>
           <form id="credentialsForm">
-            <textarea type="text" id="jsonCredentials" required placeholder="Enter your JSON-formatted credentials." rows="3"></textarea>
-            <br/>
+            <div class="form-group">
+              <textarea type="text" id="jsonCredentials" required placeholder="Enter your JSON-formatted credentials." rows="3" class="form-control"></textarea>
+            </div>
             <button class="btn btn-primary" id="validateCredentials">Validate</button>
           </form>
         </div><!-- row loginContainer -->
         <div class="row" id="describeContainer">
           <h3>Now describe your materials</h3>
-          <p>The data collected here will apply to all of the items you include in this package, so keep that in mind while gathering and organizing your materials.</p>
+          <p class="help-block">The data collected here will apply to all of the items you include in this package, so keep that in mind while gathering and organizing your materials.</p>
           <form role="form" id="metadataForm">
-            <label for="packageName">Package Name</label>
-            <input type="text" id="packageName"><br/>
-            <label for="packageAuthor">Author/Department</label>
-            <input type="text" id="packageAuthor">
-            <div class="row filedrop" id="fileContainer">
-              <input type="file" id="fileChooser">
-              <button class="btn btn-primary" id="uploadButton">Upload</button>
+            <div class="form-group">
+              <label for="packageName">Package Name</label>
+              <input type="text" id="packageName" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="packageAuthor">Author/Department</label>
+              <input type="text" id="packageAuthor" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="telephone">Phone</label>
+              <input type="tel" id="telephone" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <input type="file" id="fileChooser" required>
               <div id="results"></div>
             </div>
+           <button class="btn btn-primary" id="uploadButton">Upload</button>
           </form>
         </div><!-- row describeContainer -->
+        <div class="row" id="submitAnother">
+          <p class="bg-success">Your submission was successful.  Click <a href=".">here</a> to submit another package.</p>
+        </div>
         <div class="row" id="objectListContainer">
           
         </div><!-- row objectListContainer -->
