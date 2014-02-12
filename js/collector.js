@@ -91,9 +91,11 @@ function init() {
           'Bucket': localStorage.getItem("bucket")
     };
 
+    var milliseconds = (new Date).getTime();
     var s3_bucket = new AWS.S3(s3_params);
     var file = fileChooser.files[0];
-    var packageName = $("#packageName").val();
+    // Ensure the package is as unique as we can get it.  Also helps to figure out when things were put there.
+    var packageName = $("#packageName").val() + "-" + milliseconds.toString();
     var packageAuthor = $("#packageAuthor").val();
     var telephone = $("#telephone").val();
     var email = $("#email").val();
