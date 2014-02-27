@@ -31,51 +31,12 @@
         </div>
 
         <h2>DHL Materials Collector</h2>
-        <div class="row" id="loginContainer">
-          <h3>Enter your credentials</h3>
-          <p class="help-block">They should have been provided to you in a file.  Paste the contents of that file here.</p>
-          <form id="credentialsForm">
-            <div class="form-group">
-              <textarea type="text" id="jsonCredentials" required placeholder="Enter your JSON-formatted credentials." rows="3" class="form-control"></textarea>
-            </div>
-            <button class="btn btn-primary" id="validateCredentials">Validate</button>
-          </form>
-        </div><!-- row loginContainer -->
-        <div class="row" id="describeContainer">
-          <h3>Now describe your materials</h3>
-          <p class="help-block">The data collected here will apply to all of the items you include in this package, so keep that in mind while gathering and organizing your materials.</p>
-          <form role="form" id="metadataForm">
-            <div class="form-group">
-              <label for="packageName">Package Name</label>
-              <input type="text" id="packageName" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="packageAuthor">Author/Department</label>
-              <input type="text" id="packageAuthor" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="telephone">Phone</label>
-              <input type="tel" id="telephone" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" id="email" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <input type="file" id="fileChooser" required>
-              <div id="results"></div>
-            </div>
-           <button class="btn btn-primary" id="uploadButton">Upload</button>
-          </form>
-        </div><!-- row describeContainer -->
-        <div class="row" id="submitAnother">
-          <p class="bg-success">Your submission was successful.  Click <a href=".">here</a> to submit another package.</p>
-        </div>
-        <div class="row" id="objectListContainer">
-          
-        </div><!-- row objectListContainer -->
+        <div class="container" id="interactionContainer">
+          <!-- Contents get loaded here -->
+        </div><!-- interactionContainer -->
       </div><!-- row body -->
     </div><!-- Everything -->
+    <div class="hidden" id="hiddenContainer"></div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="http://code.jquery.com/jquery.js"></script>

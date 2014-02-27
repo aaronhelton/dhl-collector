@@ -9,39 +9,36 @@ function isJsonString(s) {
   return true;
 }
 
-function toggleForm(state) {
-  if (state == "on") {
-    $( "#loginContainer" ).show();
-  } else {
-    $( "#loginContainer" ).hide();
-  }
-}
-
 function listBucket(s3) {
 
 }
 
 function init() {
   // Hide elements that need to start off that way
-  $("#describeContainer").hide();
-  $("#fileContainer").hide();
-  $("#submitAnother").hide();
-  
+  $( '#hiddenContainer' ).hide();
 
   // Check local storage for credentials
   if (localStorage.getItem("access_key_id") && localStorage.getItem("secret_access_key") && localStorage.getItem("bucket")) {
-    $("#messages").toggleClass('text-danger', false);
-    $("#messages").toggleClass('text-info', true);
-    $( "#messages" ).html('Found credentials from a previous session.  If something goes wrong, you can re-enter them by clicking <a href="#" onClick="$(\'#loginContainer\').show(); $(\'#messages\').empty();">here</a><br/>');
-    $( "#loginContainer" ).hide();
-    $( "#describeContainer" ).show();
+    $( "#console" ).html('<span class="text-info">Found credentials from a previous session.  If something goes wrong, you can re-enter them by clicking <a href="#" onClick="$(\'#loginContainer\').show(); $(\'#messages\').empty();">here</a></span>');
+    $( "#interactionContainer" ).load( "partials/_describe.html" );
   } else {
-    $("#loginContainer").show();
-    $( "#messages" ).empty();
+    $( "#interactionContainer" ).load( "partials/_login.html" );
+    $( "#console" ).empty();
   }
 
-  // Add event listener to the validateCredentials button
-  $("#validateCredentials").click(function(e) {
+  // To do: consider the implications of persistent storage versus sessional for a random package name.
+  $.get("lib/as.txt", function(data) {
+    var lines = data.split("\n");
+    var idx = Math.floor(Math.random() * lines.length);
+    localStorage.setItem("packageName", lines[idx].toLowerCase() + "-");
+    $.get("lib/ns.txt", function(data) {
+      var lines = data.split("\n");
+      var idx = Math.floor(Math.random() * lines.length);
+      localStorage.setItem("packageName", localStorage.packageName + lines[idx].toLowerCase());
+    });
+  });
+
+  $( '#interactionContainer' ).on('click', '#validateCredentials', function(e) {
     e.preventDefault();
     var str = $("#jsonCredentials").val();
     if (isJsonString(str)) {
@@ -51,39 +48,34 @@ function init() {
           'accessKeyId': jsonData['AccessKeyID'],
           'secretAccessKey': jsonData['SecretAccessKey'],
           'Bucket': jsonData['bucket']
-        };  
+        };
         var s3 = new AWS.S3(s3_params);
 
         s3.getBucketAcl(params = { 'Bucket': jsonData['bucket'] }, function (err, data) {
           if (err) {
-            $("#messages").toggleClass('text-danger', false);
-            $("#messages").toggleClass('text-info', true);
-            $("#messages").html("There was an error with the credentials: " + err + "<br/>");
+            $("#console").html('<span class="text-danger">There was an error with the credentials: ' + err + '<br/></span>');
           } else {
-            $("#loginContainer").hide();
-            $("#messages").html(
-'<p>Your credentials appear to be valid.  If something goes wrong, you can re-enter them by clicking <a href="#" onClick="$(\'#loginContainer\').show(); $(\'#messages\').empty();">here</a><br/>');
+            $("#console").html(
+'<span class="text-success">Your credentials appear to be valid.  If something goes wrong, you can re-enter them by clicking <a href="#" onClick="$(\'#loginContainer\').show(); $(\'#messages\').empty();">here</a></span>');
             localStorage.setItem("access_key_id", jsonData['AccessKeyID']);
             localStorage.setItem("secret_access_key", jsonData['SecretAccessKey']);
             localStorage.setItem("bucket", jsonData['bucket']);
             localStorage.setItem("username", jsonData['username']);
+            localStorage.setItem("department", jsonData['Department']);
+            localStorage.setItem("email", jsonData['Contact Email']);
+            localStorage.setItem("phone", jsonData['Phone']);
 
-            $("#describeContainer").show();
-            $("#fileContainer").show();
+            $( '#interactionContainer' ).load( "partials/_describe.html" );
           }
         });
       }
     } else {
-      $("#messages").toggleClass('text-danger', true);
-      $("#messages").toggleClass('text-info', false);
-      $("#messages").html("There was an error processing the credentials.  Paste them EXACTLY as you received them and try again.");
+      $("#console").html('<span class="text-danger">There was an error processing the credentials.  Paste them EXACTLY as you received them and try again.</span>');
     }
+
   });
 
-  // Add event listener to upload button
-  // Not sure why the jQuery selector doeesn't work here
-  var fileChooser = document.getElementById("fileChooser");
-  $("#uploadButton").click(function(e) { 
+  $( '#interactionContainer' ).on('click', '#uploadButton', function(e) {
     e.preventDefault();
     var s3_params = {
           'accessKeyId': localStorage.getItem("access_key_id"),
@@ -95,7 +87,8 @@ function init() {
     var s3_bucket = new AWS.S3(s3_params);
     var file = fileChooser.files[0];
     // Ensure the package is as unique as we can get it.  Also helps to figure out when things were put there.
-    var packageName = $("#packageName").val() + "-" + milliseconds.toString();
+    var packageName = localStorage.getItem("packageName") + "-" + milliseconds.toString();
+    //console.log( packageName );
     var packageAuthor = $("#packageAuthor").val();
     var telephone = $("#telephone").val();
     var email = $("#email").val();
@@ -109,28 +102,48 @@ function init() {
       var m_params = { Bucket: localStorage.getItem("bucket"), Key: descriptionFile, Body: textBody };
       s3_bucket.putObject(m_params, function (err, data) {
         if(err) {
-          $("#messages").toggleClass('text-danger', true);
-          $("#messages").toggleClass('text-info', false);
-          $("#messages").html(err);
+          $("#console").html('<span class="text-danger">' + err + '</span>');
         } else {
           var b_params = { Bucket: localStorage.getItem("bucket"), Key: binaryFile, ContentType: file.type, Body: file };
           s3_bucket.putObject(b_params, function (err, data) {
             if(err) {
-              $("#messages").toggleClass('text-danger', true);
-              $("#messages").toggleClass('text-info', false);
-              $("#messages").html(err);
+              $("#console").html('<span class="text-danger">' + err + '</span>');
             } else {
-              $("#describeContainer").hide();
-              $("#fileContainer").hide();
-              $("#submitAnother").show();
+              //$("#describeContainer").hide();
+              //$("#fileContainer").hide();
+              //$("#submitAnother").show();
+              $( '#interactionContainer' ).load( "partials/_submitAnother.html" );
             }
           });
         }
       });
     } else {
-      $("#messages").toggleClass('text-danger', true);
-      $("#messages").toggleClass('text-info', false);
-      $("#messages").html("Please provide all of the requested information below.");
+      $("#console").html('<span class="text-danger">Please provide all of the requested information below.</span>');
+    }
+    
+  });
+
+  $( '#interactionContainer' ).on('mouseover', '#describeContainer', function() { 
+    // Check local storage for whatever is there.
+    var phone = localStorage.getItem("phone");
+    var department = localStorage.getItem("department");
+    var email = localStorage.getItem("email");
+
+    if (department) {
+      $( '#packageAuthor' ).val( department );
+    } else {
+      $( '#packageAuthor' ).clear();
+    }
+    if (phone) {
+      $( '#telephone' ).val( phone );
+    } else {
+      $( '#telephone' ).clear();
+    }
+    if (email) {
+      $( '#email' ).val( email );
+    } else {
+      $( '#email' ).clear();
     }
   });
+
 }

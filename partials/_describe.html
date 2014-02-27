@@ -1,0 +1,23 @@
+        <div class="row" id="describeContainer">
+          <h3>Now describe your materials</h3>
+          <p class="help-block">The data collected here will apply to all of the items you include in this package, so keep that in mind while gathering and organizing your materials.</p>
+          <form role="form" id="metadataForm">
+            <div class="form-group">
+              <label for="packageAuthor">Author/Department</label>
+              <input type="text" id="packageAuthor" class="form-control" required autofocus="autofocus">
+            </div>
+            <div class="form-group">
+              <label for="telephone">Phone</label>
+              <input type="tel" id="telephone" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <input type="file" id="fileChooser" required>
+              <div id="results"></div>
+            </div>
+           <button class="btn btn-primary" id="uploadButton">Upload</button>
+          </form>
+        </div><!-- row describeContainer -->
