@@ -14,19 +14,24 @@ function listBucket(s3) {
 }
 
 function init() {
-  // Hide elements that need to start off that way
-  $( '#hiddenContainer' ).hide();
+  // Hide all elements to start off 
+  $( '#loginContainer' ).hide();
+  $( '#describeContainer' ).hide();
+  $( '#submitAnotherContainer' ).hide();
+  $( '#recentPackagesContainer' ).hide();
+
 
   // Check local storage for credentials
   if (localStorage.getItem("access_key_id") && localStorage.getItem("secret_access_key") && localStorage.getItem("bucket")) {
     $( "#console" ).html('<span class="text-info">Found credentials from a previous session.  If something goes wrong, you can re-enter them by clicking <a href="#" onClick="$(\'#loginContainer\').show(); $(\'#messages\').empty();">here</a></span>');
-    $( "#interactionContainer" ).load( "partials/_describe.html" );
+    $( '#describeContainer' ).show();
   } else {
-    $( "#interactionContainer" ).load( "partials/_login.html" );
+    $( '#loginContainer' ).show();
     $( "#console" ).empty();
   }
 
-  // To do: consider the implications of persistent storage versus sessional for a random package name.
+  // To do: consider the implications of persistent storage versus sessional for a random package name.  
+  // So far there don't seem to be any issues doing it this way.
   $.get("lib/as.txt", function(data) {
     var lines = data.split("\n");
     var idx = Math.floor(Math.random() * lines.length);
@@ -38,7 +43,7 @@ function init() {
     });
   });
 
-  $( '#interactionContainer' ).on('click', '#validateCredentials', function(e) {
+  $( '#loginContainer' ).on('click', '#validateCredentials', function(e) {
     e.preventDefault();
     var str = $("#jsonCredentials").val();
     if (isJsonString(str)) {
@@ -65,7 +70,13 @@ function init() {
             localStorage.setItem("email", jsonData['Contact Email']);
             localStorage.setItem("phone", jsonData['Phone']);
 
-            $( '#interactionContainer' ).load( "partials/_describe.html" );
+            $( '#packageAuthor' ).val( jsonData['Department'] );
+            $( '#telephone' ).val( jsonData['Phone'] );
+            $( '#email' ).val( jsonData['Contact Email'] );
+
+            $( '#describeContainer' ).show();
+            $( '#recentPackagesContainer' ).show();
+            $( '#loginContainer' ).hide();
           }
         });
       }
@@ -75,7 +86,8 @@ function init() {
 
   });
 
-  $( '#interactionContainer' ).on('click', '#uploadButton', function(e) {
+
+  $( '#describeContainer' ).on('click', '#uploadButton', function(e) {
     e.preventDefault();
     var s3_params = {
           'accessKeyId': localStorage.getItem("access_key_id"),
@@ -112,6 +124,8 @@ function init() {
               //$("#describeContainer").hide();
               //$("#fileContainer").hide();
               //$("#submitAnother").show();
+              $( '#submitAnotherContainer' ).show();
+              // refresh recent package list....
               $( '#interactionContainer' ).load( "partials/_submitAnother.html" );
             }
           });
@@ -121,29 +135,6 @@ function init() {
       $("#console").html('<span class="text-danger">Please provide all of the requested information below.</span>');
     }
     
-  });
-
-  $( '#interactionContainer' ).on('mouseover', '#describeContainer', function() { 
-    // Check local storage for whatever is there.
-    var phone = localStorage.getItem("phone");
-    var department = localStorage.getItem("department");
-    var email = localStorage.getItem("email");
-
-    if (department) {
-      $( '#packageAuthor' ).val( department );
-    } else {
-      $( '#packageAuthor' ).clear();
-    }
-    if (phone) {
-      $( '#telephone' ).val( phone );
-    } else {
-      $( '#telephone' ).clear();
-    }
-    if (email) {
-      $( '#email' ).val( email );
-    } else {
-      $( '#email' ).clear();
-    }
   });
 
 }

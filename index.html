@@ -9,9 +9,10 @@
     <title>DHL Material Collector</title>
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <!-- <style>
-      .filedrop { border: 2px dashed #ccc; border-radius: 5px; min-height: 10em;}
-    </style> -->
+    <style>
+      #filedrop { border: 2px dashed #ccc; border-radius: 5px; min-height: 10em;}
+      #filedrop.hover { border: 2px dashed #00c; border-radius: 5px; min-height: 10em;}
+    </style>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -32,18 +33,58 @@
 
         <h2>DHL Materials Collector</h2>
         <div class="container" id="interactionContainer">
-          <!-- Contents get loaded here -->
+          <!-- credentialsContainer -->
+          <div class="row" id="loginContainer">
+            <h3>Enter your credentials</h3>
+            <p class="help-block">They should have been provided to you in a file.  Paste the contents of that file here.</p>
+            <form id="credentialsForm">
+              <div class="form-group">
+                <textarea type="text" id="jsonCredentials" required placeholder="Enter your JSON-formatted credentials." rows="3" class="form-control"></textarea>
+              </div>
+              <button class="btn btn-primary" id="validateCredentials">Validate</button>
+            </form>
+          </div>
+          <!-- describeContainer -->
+          <div class="row" id="describeContainer">
+            <h3>Describe your materials</h3>
+            <p class="help-block">The data collected here will apply to all of the items you include in this package, so keep that in mind while gathering and organizing your materials.</p>
+            <form role="form" id="metadataForm" class="dropzone">
+              <div class="form-group">
+                <label for="packageAuthor">Author/Department</label>
+                <input type="text" id="packageAuthor" class="form-control" required autofocus="autofocus">
+              </div>
+              <div class="form-group">
+                <label for="telephone">Phone</label>
+                <input type="tel" id="telephone" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" required>
+              </div>
+             <button class="btn btn-primary" id="uploadButton">Submit</button>
+            </form>
+          </div>
+          <!-- submitAnotherContainer -->
+          <div class="row" id="submitAnotherContainer">
+            <p class="bg-success">Your submission was successful.  Click <a href=".">here</a> to submit another package.</p>
+          </div>
+          <!-- recentPackagesContainer -->
+          <div class="row" id="recentPackagesContainer">
+
+          </div>
         </div><!-- interactionContainer -->
       </div><!-- row body -->
     </div><!-- Everything -->
-    <div class="hidden" id="hiddenContainer"></div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="lib/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="lib/bootstrap.min.js"></script>
     <!-- Amazon's Javascript SDK for Browsers -->
     <script src="lib/dist/aws-sdk-2.0.0-rc9.min.js"></script>
+    <!-- sropzone.js to facilitate dnd uploads -->
+    <script src="lib/dropzone.js"></script>
+    <!-- Main script for the application -->
     <script src="js/collector.js"></script>
   </body>
 </html>
