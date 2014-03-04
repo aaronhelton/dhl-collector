@@ -9,10 +9,6 @@
     <title>DHL Material Collector</title>
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <style>
-      #filedrop { border: 2px dashed #ccc; border-radius: 5px; min-height: 10em;}
-      #filedrop.hover { border: 2px dashed #00c; border-radius: 5px; min-height: 10em;}
-    </style>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -23,56 +19,44 @@
   <body>
     <div class="container" id="everything">
       <div class="row">
-        <div id="header" class="nav navbar">
-        </div>
+        <nav class="navbar navbar-default" role="navigation">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/collector/">Collector</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <li id="homeLink"><a href="/collector/">Home</a></li>
+                <li id="collectLink"><a href="collect.html">Submit Materials</a></li>
+                <li class="dropdown" id="learnLink">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li id="learnWhatLink"><a href="?learn&what">What it is</a></li>
+                    <li id="learnWhoLink"><a href="?learn&who">Who can use it</a></li>
+                    <li id="learnHowLink"><a href="?learn&how">How to get access</a></li>
+                    <li class="divider"></li>
+                    <li id="learnPrepareLink"><a href="?learn&prepare">Preparing materials</a></li>
+                  </ul>
+                </li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li id="requestAccessLink"><a href="?request_access">Request Access</a></li>
+                <li id="contactUsLink"><a href="?contact_us">Contact DHL</a></li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
       </div><!-- row -->
       <div class="row" id="body">
-        <div class="row" id="console">
-          <span id="messages" class="text-info"></span>
-        </div>
-
-        <h2>DHL Materials Collector</h2>
-        <div class="container" id="interactionContainer">
-          <!-- credentialsContainer -->
-          <div class="row" id="loginContainer">
-            <h3>Enter your credentials</h3>
-            <p class="help-block">They should have been provided to you in a file.  Paste the contents of that file here.</p>
-            <form id="credentialsForm">
-              <div class="form-group">
-                <textarea type="text" id="jsonCredentials" required placeholder="Enter your JSON-formatted credentials." rows="3" class="form-control"></textarea>
-              </div>
-              <button class="btn btn-primary" id="validateCredentials">Validate</button>
-            </form>
-          </div>
-          <!-- describeContainer -->
-          <div class="row" id="describeContainer">
-            <h3>Describe your materials</h3>
-            <p class="help-block">The data collected here will apply to all of the items you include in this package, so keep that in mind while gathering and organizing your materials.</p>
-            <form role="form" id="metadataForm" class="dropzone">
-              <div class="form-group">
-                <label for="packageAuthor">Author/Department</label>
-                <input type="text" id="packageAuthor" class="form-control" required autofocus="autofocus">
-              </div>
-              <div class="form-group">
-                <label for="telephone">Phone</label>
-                <input type="tel" id="telephone" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" class="form-control" required>
-              </div>
-             <button class="btn btn-primary" id="uploadButton">Submit</button>
-            </form>
-          </div>
-          <!-- submitAnotherContainer -->
-          <div class="row" id="submitAnotherContainer">
-            <p class="bg-success">Your submission was successful.  Click <a href=".">here</a> to submit another package.</p>
-          </div>
-          <!-- recentPackagesContainer -->
-          <div class="row" id="recentPackagesContainer">
-
-          </div>
-        </div><!-- interactionContainer -->
       </div><!-- row body -->
     </div><!-- Everything -->
 
@@ -80,11 +64,135 @@
     <script src="lib/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="lib/bootstrap.min.js"></script>
-    <!-- Amazon's Javascript SDK for Browsers -->
-    <script src="lib/dist/aws-sdk-2.0.0-rc9.min.js"></script>
-    <!-- sropzone.js to facilitate dnd uploads -->
-    <script src="lib/dropzone.js"></script>
-    <!-- Main script for the application -->
-    <script src="js/collector.js"></script>
+    <!-- Page selector script -->
+    <script>
+      function urlObject(options) {
+        "use strict";
+        
+        var	url_search_arr,
+ 		option_key,
+		i,
+		urlObj,
+		get_param,
+		key,
+		val,
+		url_query,
+		url_get_params = {},
+		a = document.createElement('a'),
+		default_options = {
+		  'url': window.location.href,
+		  'unescape': true,
+		  'convert_num': true
+                };
+    if (typeof options !== "object") {
+        options = default_options;
+    } else {
+        for (option_key in default_options) {
+            if (default_options.hasOwnProperty(option_key)) {
+                if (options[option_key] === undefined) {
+                    options[option_key] = default_options[option_key];
+                }
+            }
+        }
+    }
+
+    a.href = options.url;
+    url_query = a.search.substring(1);
+    url_search_arr = url_query.split('&');
+
+    if (url_search_arr[0].length > 1) {
+        for (i = 0; i < url_search_arr.length; i += 1) {
+            get_param = url_search_arr[i].split("=");
+
+            if (options.unescape) {
+                key = decodeURI(get_param[0]);
+                val = decodeURI(get_param[1]);
+            } else {
+                key = get_param[0];
+                val = get_param[1];
+            }
+
+            if (options.convert_num) {
+                if (val.match(/^\d+$/)) {
+                    val = parseInt(val, 10);
+                } else if (val.match(/^\d+\.\d+$/)) {
+                    val = parseFloat(val);
+                }
+            }
+
+            if (url_get_params[key] === undefined) {
+                url_get_params[key] = val;
+            } else if (typeof url_get_params[key] === "string") {
+                url_get_params[key] = [url_get_params[key], val];
+            } else {
+                url_get_params[key].push(val);
+            }
+
+            get_param = [];
+        }
+    }
+
+    urlObj = {
+        protocol: a.protocol,
+        hostname: a.hostname,
+        host: a.host,
+        port: a.port,
+        hash: a.hash.substr(1),
+        pathname: a.pathname,
+        search: a.search,
+        parameters: url_get_params
+    };
+
+    return urlObj;
+      }
+
+      var q = urlObject().search;
+      if (q) {
+        var base_param = q.split("\&");
+        $( 'li' ).removeClass( 'active' );
+        switch(base_param[0]) {
+          case "?learn":
+            $( '#learnLink' ).addClass( 'active' );
+            if (base_param[1]) {
+              switch(base_param[1]) {
+                case "what":
+                  $( '#body' ).load( 'static/_what.html' );
+                  $( '#learnWhatLink' ).addClass( 'active' );
+                  break;
+                case "who": 
+                  $( '#body' ).load( 'static/_who.html' );
+                  $( '#learnWhoLink' ).addClass( 'active' );
+                  break;
+                case "how": 
+                  $( '#body' ).load( 'static/_how.html' );
+                  $( '#learnHowLink' ).addClass( 'active' );
+                  break;
+                case "prepare":
+                  $( '#body' ).load( 'static/_prepare.html' );
+                  $( '#learnPrepareLink' ).addClass( 'active' );
+                  break;
+                default:
+                  $( '#body' ).load( 'static/_what.html' );
+                  $( '#learnLink' ).addClass( 'active' );
+              }
+            }
+            break;
+          case "?request_access":
+            $( '#body' ).load( 'static/_request_access.html' );
+            $( '#requestAccessLink' ).addClass( 'active' );
+            break;
+          case "?contact_us":
+            $( '#body' ).load( 'static/_contact_us.html' );
+            $( '#contactUsLink' ).addClass( 'active' );
+            break;
+          default:
+            $( '#body' ).load( 'static/_welcome.html' );
+            $( '#homeLink' ).addClass( 'active' );
+        }
+      } else {
+        $( '#body' ).load( 'static/_welcome.html' ); 
+        $( '#homeLink' ).addClass( 'active' );
+      }
+    </script>
   </body>
 </html>

@@ -15,6 +15,7 @@ function listBucket(s3) {
 
 function init() {
   // Hide all elements to start off 
+
   $( '#loginContainer' ).hide();
   $( '#describeContainer' ).hide();
   $( '#submitAnotherContainer' ).hide();
