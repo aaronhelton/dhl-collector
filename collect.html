@@ -23,8 +23,42 @@
   <body>
     <div class="container" id="everything">
       <div class="row">
-        <div id="header" class="nav navbar">
-        </div>
+        <nav class="navbar navbar-default" role="navigation">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/collector/">Collector</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <li id="homeLink"><a href="/collector/">Home</a></li>
+                <li id="collectLink" class="active"><a href="collect.html">Submit Materials</a></li>
+                <li class="dropdown" id="learnLink">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Learn <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li id="learnWhatLink"><a href="index.html?learn&what">What it is</a></li>
+                    <li id="learnWhoLink"><a href="index.html?learn&who">Who can use it</a></li>
+                    <li id="learnHowLink"><a href="index.html?learn&how">How to get access</a></li>
+                    <li class="divider"></li>
+                    <li id="learnPrepareLink"><a href="index.html?learn&prepare">Preparing materials</a></li>
+                  </ul>
+                </li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li id="requestAccessLink"><a href="index.html?request_access">Request Access</a></li>
+                <li id="contactUsLink"><a href="index.html?contact_us">Contact DHL</a></li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
       </div><!-- row -->
       <div class="row" id="body">
         <div class="row" id="console">
@@ -48,7 +82,7 @@
           <div class="row" id="describeContainer">
             <h3>Describe your materials</h3>
             <p class="help-block">The data collected here will apply to all of the items you include in this package, so keep that in mind while gathering and organizing your materials.</p>
-            <form role="form" id="metadataForm" class="dropzone">
+            <form role="form" id="metadataForm">
               <div class="form-group">
                 <label for="packageAuthor">Author/Department</label>
                 <input type="text" id="packageAuthor" class="form-control" required autofocus="autofocus">
@@ -61,12 +95,15 @@
                 <label for="email">Email</label>
                 <input type="email" id="email" class="form-control" required>
               </div>
-             <button class="btn btn-primary" id="uploadButton">Submit</button>
+              <div class="form-group">
+                <input id="fileChooser" type="file" name="files[]" multiple>
+              </div>
+              <button class="btn btn-primary" id="uploadButton">Submit</button>
             </form>
           </div>
           <!-- submitAnotherContainer -->
           <div class="row" id="submitAnotherContainer">
-            <p class="bg-success">Your submission was successful.  Click <a href=".">here</a> to submit another package.</p>
+            <p class="bg-success">Your submission was successful.  Click <a href="./collect.html">here</a> to submit another package.</p>
           </div>
           <!-- recentPackagesContainer -->
           <div class="row" id="recentPackagesContainer">
@@ -82,8 +119,6 @@
     <script src="lib/bootstrap.min.js"></script>
     <!-- Amazon's Javascript SDK for Browsers -->
     <script src="lib/dist/aws-sdk-2.0.0-rc9.min.js"></script>
-    <!-- sropzone.js to facilitate dnd uploads -->
-    <script src="lib/dropzone.js"></script>
     <!-- Main script for the application -->
     <script src="js/collector.js"></script>
   </body>

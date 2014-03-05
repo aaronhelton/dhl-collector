@@ -26,6 +26,12 @@ function init() {
   if (localStorage.getItem("access_key_id") && localStorage.getItem("secret_access_key") && localStorage.getItem("bucket")) {
     $( "#console" ).html('<span class="text-info">Found credentials from a previous session.  If something goes wrong, you can re-enter them by clicking <a href="#" onClick="$(\'#loginContainer\').show(); $(\'#messages\').empty();">here</a></span>');
     $( '#describeContainer' ).show();
+    $( '#packageAuthor' ).val( localStorage.getItem( 'department' ) );
+    $( '#telephone' ).val( localStorage.getItem( 'phone' ) );
+    $( '#email' ).val( localStorage.getItem( 'email' ) );
+
+    $( '#describeContainer' ).show();
+    $( '#recentPackagesContainer' ).show();
   } else {
     $( '#loginContainer' ).show();
     $( "#console" ).empty();
@@ -122,12 +128,8 @@ function init() {
             if(err) {
               $("#console").html('<span class="text-danger">' + err + '</span>');
             } else {
-              //$("#describeContainer").hide();
-              //$("#fileContainer").hide();
-              //$("#submitAnother").show();
+              $("#describeContainer").hide();
               $( '#submitAnotherContainer' ).show();
-              // refresh recent package list....
-              $( '#interactionContainer' ).load( "partials/_submitAnother.html" );
             }
           });
         }
